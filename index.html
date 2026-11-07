@@ -1,0 +1,1814 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>התימני המצחיק</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Rubik:wght@400;600;700;800&display=swap');
+        
+        body {
+            font-family: 'Rubik', sans-serif;
+            min-height: 100vh;
+            overflow-x: hidden;
+            transition: color 0.4s ease;
+            background-color: #0f172a;
+        }
+
+        /* --- שכבת רקע פוטו-ריאליסטי אמיתי --- */
+        #realistic-bg-layer {
+            position: fixed;
+            inset: -4%;
+            width: 108%;
+            height: 108%;
+            background-size: cover;
+            background-position: center center;
+            background-repeat: no-repeat;
+            transition: background-image 0.6s ease-in-out, filter 0.5s ease, transform 0.15s ease-out;
+            z-index: -20;
+            pointer-events: none;
+            will-change: transform, background-image;
+            transform: scale(1.04);
+        }
+
+        #realistic-bg-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: -15;
+            pointer-events: none;
+            transition: background 0.5s ease;
+        }
+
+        body.dark-mode #realistic-bg-overlay {
+            background: rgba(10, 15, 26, 0.82) !important;
+        }
+
+        /* --- תפאורה תלת-מימדית --- */
+        #bg-3d-scene { perspective: 1000px; perspective-origin: 50% 45%; }
+        #scene-3d-world { transform-style: preserve-3d; transition: transform 0.15s ease-out; }
+
+        .floating-3d-item {
+            position: absolute;
+            transform-style: preserve-3d;
+            animation: float3d 4.5s ease-in-out infinite alternate;
+            user-select: none;
+            filter: drop-shadow(0 14px 12px rgba(0,0,0,0.35));
+        }
+        @keyframes float3d {
+            0% { transform: translateY(0px) rotateZ(0deg) translateZ(35px); }
+            100% { transform: translateY(-22px) rotateZ(5deg) translateZ(85px); }
+        }
+
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.88);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-radius: 22px;
+            border: 1px solid rgba(255, 255, 255, 0.7);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.14);
+            transition: all 0.3s ease;
+        }
+        body.dark-mode .glass-panel {
+            background: rgba(20, 26, 40, 0.85);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            color: #f8fafc;
+            box-shadow: 0 12px 36px rgba(0, 0, 0, 0.45);
+        }
+
+        @keyframes bounce-rotate {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-18px) rotate(8deg); }
+        }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-8px) rotate(-4deg); }
+            75% { transform: translateX(8px) rotate(4deg); }
+        }
+        @keyframes yemenite-step {
+            0% { transform: translateX(0) scale(1); }
+            25% { transform: translateX(25px) scale(1.08) rotate(10deg); }
+            50% { transform: translateX(0) scale(1.15) rotate(0deg); }
+            75% { transform: translateX(-25px) scale(1.08) rotate(-10deg); }
+            100% { transform: translateX(0) scale(1); }
+        }
+        @keyframes rain {
+            0% { transform: translateY(-10vh) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(105vh) rotate(360deg); opacity: 0; }
+        }
+        @keyframes float-up {
+            0% { transform: translateY(0) scale(1); opacity: 1; }
+            100% { transform: translateY(-90px) scale(1.4); opacity: 0; }
+        }
+        @keyframes pulse-fire {
+            0%, 100% { box-shadow: 0 0 15px rgba(239, 68, 68, 0.6); }
+            50% { box-shadow: 0 0 35px rgba(245, 158, 11, 0.95); }
+        }
+
+        .anim-bounce { animation: bounce-rotate 0.35s ease; }
+        .anim-shake { animation: shake 0.35s ease; }
+        .anim-yemenite { animation: yemenite-step 0.9s ease; }
+        .tomato-fever-active { animation: pulse-fire 1s infinite alternate; }
+
+        @keyframes electric-alert {
+            0%, 100% { background-color: rgba(220, 38, 38, 0.92); box-shadow: 0 0 50px rgba(239, 68, 68, 0.95); }
+            50% { background-color: rgba(217, 119, 6, 0.92); box-shadow: 0 0 70px rgba(245, 158, 11, 1); }
+        }
+        .electric-siren { animation: electric-alert 0.35s infinite alternate; }
+
+        .floating-text {
+            position: fixed;
+            font-size: 1.6rem;
+            font-weight: 800;
+            color: #16a34a;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.4);
+            pointer-events: none;
+            animation: float-up 0.9s ease-out forwards;
+            z-index: 100;
+        }
+
+        .falling-item {
+            position: fixed;
+            font-size: 2.3rem;
+            z-index: 1000;
+            pointer-events: none;
+            animation: rain 2.2s linear forwards;
+        }
+
+        /* כוסות */
+        .cup {
+            font-size: 3.8rem;
+            cursor: pointer;
+            transition: left 0.3s ease-in-out, transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            user-select: none;
+            position: absolute;
+            top: 0;
+            z-index: 10;
+        }
+        .cup:hover { transform: scale(1.1); }
+        .cup.lifted { transform: translateY(-38px); }
+        .coin { font-size: 2.3rem; z-index: 5; }
+
+        /* רולטה תימנית */
+        #roulette-wheel { transition: transform 4s cubic-bezier(0.15, 0.9, 0.25, 1); transform-origin: center center; }
+        .roulette-pointer {
+            width: 0; height: 0; 
+            border-left: 14px solid transparent;
+            border-right: 14px solid transparent;
+            border-top: 24px solid #ef4444;
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.4));
+        }
+
+        /* משחק סיר המרק */
+        #catcher-canvas {
+            background: linear-gradient(180deg, rgba(30, 41, 59, 0.9) 0%, rgba(15, 23, 42, 0.95) 100%);
+            border-radius: 18px;
+            box-shadow: inset 0 2px 10px rgba(0,0,0,0.5);
+            touch-action: none;
+        }
+
+        /* סיידבאר קבלן שיפוצים */
+        #contractor-sidebar { transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1); }
+        #contractor-sidebar.closed { transform: translateX(105%); }
+        .floating-contractor-btn {
+            position: fixed;
+            top: 45%;
+            right: 0;
+            transform: translateY(-50%);
+            z-index: 40;
+            writing-mode: vertical-rl;
+            text-orientation: mixed;
+        }
+
+        #toast-container {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .toast {
+            background: #1e293b;
+            color: #fff;
+            padding: 9px 18px;
+            border-radius: 10px;
+            box-shadow: 0 6px 16px rgba(0,0,0,0.3);
+            animation: slideUp 0.25s ease forwards, fadeOut 0.3s ease 2.6s forwards;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+        @keyframes slideUp { from { transform: translateY(100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        @keyframes fadeOut { from { opacity: 1; } to { opacity: 0; } }
+
+        .disabled-item {
+            opacity: 0.5;
+            pointer-events: none;
+            filter: grayscale(100%);
+        }
+    </style>
+</head>
+<body class="text-gray-800 flex flex-col items-center py-5 px-3">
+
+    <div id="realistic-bg-layer"></div>
+    <div id="realistic-bg-overlay"></div>
+
+    <div id="bg-3d-scene" class="fixed inset-0 pointer-events-none -z-10 overflow-hidden">
+        <div id="scene-3d-world" class="w-full h-full relative">
+            <div id="scene-layers-3d" class="absolute inset-0"></div>
+        </div>
+    </div>
+
+    <div id="toast-container"></div>
+
+    <!-- מודאל איפוס משחק -->
+    <div id="reset-game-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-[10010] hidden flex justify-center items-center p-4">
+        <div class="glass-panel p-6 max-w-xs w-full text-center rounded-2xl border-2 border-red-500 shadow-2xl">
+            <div class="text-5xl mb-2">🔄⚠️</div>
+            <h3 class="font-black text-lg text-red-600 mb-2">איפוס משחק מוחלט</h3>
+            <p class="text-xs text-gray-700 dark:text-gray-300 mb-4 font-semibold">האם למחוק הכל ולהתחיל מחדש?</p>
+            <div class="flex gap-2 justify-center">
+                <button onclick="closeResetModal()" class="flex-1 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-white py-2 rounded-xl font-bold text-xs hover:bg-gray-300">ביטול</button>
+                <button onclick="confirmResetAllData()" class="flex-1 bg-red-600 hover:bg-red-700 text-white py-2 rounded-xl font-black text-xs shadow-lg">כן, אפס עכשיו</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- מודאל רולטה תימנית -->
+    <div id="roulette-modal" class="fixed inset-0 bg-black/85 backdrop-blur-md z-[10008] hidden flex justify-center items-center p-4">
+        <div class="glass-panel p-5 max-w-sm w-full text-center rounded-3xl border-2 border-amber-400 shadow-2xl relative">
+            <button onclick="closeRouletteModal()" class="absolute top-3 left-3 text-gray-500 hover:text-black dark:hover:text-white text-xl font-black">✕</button>
+            <div class="text-3xl mb-1">🎰🎯</div>
+            <h3 class="font-black text-xl text-amber-600 dark:text-amber-400">רולטה תימנית</h3>
+            <div class="relative w-64 h-64 mx-auto my-2 flex items-center justify-center">
+                <div class="roulette-pointer absolute -top-1 left-1/2 -translate-x-1/2 z-20"></div>
+                <canvas id="roulette-canvas" width="250" height="250" class="rounded-full shadow-2xl border-4 border-amber-500"></canvas>
+            </div>
+            <div id="roulette-result-text" class="text-sm font-black text-amber-500 min-h-[24px] mb-3">סובב את הגלגל!</div>
+            <button id="btn-spin-roulette" onclick="spinYemeniteRoulette()" class="w-full bg-gradient-to-r from-amber-500 to-yellow-600 hover:from-amber-600 text-white font-black py-3 px-4 rounded-2xl shadow-lg transition transform active:scale-95 text-sm">
+                🎲 סובב עכשיו (חינם כל 2 דקות)!
+            </button>
+        </div>
+    </div>
+
+    <!-- מודאל מיני-משחק סיר המרק -->
+    <div id="catcher-game-modal" class="fixed inset-0 bg-black/85 backdrop-blur-md z-[10008] hidden flex justify-center items-center p-3">
+        <div class="glass-panel p-4 max-w-md w-full text-center rounded-3xl border-2 border-green-500 shadow-2xl relative">
+            <button onclick="closeCatcherGameModal()" class="absolute top-3 left-3 text-gray-500 hover:text-black dark:hover:text-white text-xl font-black">✕</button>
+            <div class="flex justify-between items-center px-2 mb-2">
+                <span class="text-xs font-bold text-gray-500 dark:text-gray-300">⏱️ <span id="catcher-time-left" class="text-red-500 font-extrabold text-sm">25s</span></span>
+                <h3 class="font-black text-lg text-green-600 dark:text-green-400">🍲 סיר המרק!</h3>
+                <span class="text-xs font-bold text-gray-500 dark:text-gray-300">🪙 <span id="catcher-score-display" class="text-green-600 font-extrabold text-sm">0</span></span>
+            </div>
+            <p id="catcher-dynamic-desc" class="text-[11px] text-gray-500 dark:text-gray-400 mb-2 font-medium">עלות כניסה: 0</p>
+            <div class="relative w-full flex justify-center">
+                <canvas id="catcher-canvas" width="340" height="380" class="max-w-full"></canvas>
+            </div>
+            <div class="flex gap-2 mt-3">
+                <button id="btn-start-catcher" onclick="startCatcherGame()" class="flex-1 bg-green-600 hover:bg-green-700 text-white font-black py-2.5 rounded-xl shadow text-xs">
+                    ▶️ שחק עכשיו
+                </button>
+                <button onclick="closeCatcherGameModal()" class="bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 font-bold px-4 py-2.5 rounded-xl text-xs">
+                    סגור
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- מודאל שאלון תימני (Trivia) -->
+    <div id="quiz-game-modal" class="fixed inset-0 bg-black/85 backdrop-blur-md z-[10008] hidden flex justify-center items-center p-3">
+        <div class="glass-panel p-4 max-w-md w-full text-center rounded-3xl border-2 border-purple-500 shadow-2xl relative">
+            <button onclick="closeQuizModal()" class="absolute top-3 left-3 text-gray-500 hover:text-black dark:hover:text-white text-xl font-black">✕</button>
+            <div class="text-4xl mb-2">📜</div>
+            <h3 class="font-black text-xl text-purple-600 dark:text-purple-400 mb-1">שאלון תימני אמריקאי</h3>
+            <p class="text-xs font-bold text-gray-600 dark:text-gray-300 mb-3">
+                עלות כניסה לשאלה: <span class="text-red-500">1Qa</span><br>
+                פרס לתשובה נכונה: <span class="text-green-500">0.5Qa</span>
+            </p>
+            
+            <div id="quiz-pre-start">
+                <button id="quiz-btn-start" onclick="startQuiz()" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-black py-3 rounded-xl shadow text-sm">
+                    התחל שאלון (1Qa)
+                </button>
+            </div>
+            
+            <div id="quiz-active-area" class="hidden flex flex-col gap-3">
+                <h4 id="quiz-question-text" class="font-bold text-md text-gray-800 dark:text-gray-100"></h4>
+                <div id="quiz-options-container" class="grid grid-cols-1 gap-2"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- מודאל חשמל -->
+    <div id="electric-bill-modal" class="fixed inset-0 bg-black/85 backdrop-blur-md z-[10005] hidden flex justify-center items-center p-4">
+        <div class="glass-panel electric-siren p-6 max-w-sm w-full text-center rounded-3xl border-4 border-yellow-400 text-white shadow-2xl">
+            <div class="text-6xl mb-2 animate-bounce">⚡😱⚡</div>
+            <h2 class="text-2xl font-black text-yellow-300 drop-shadow">חשבון חשמל מנופח!</h2>
+            <div class="text-3xl font-extrabold text-red-300 my-2" id="electric-lost-display">-0 מדד</div>
+            <button onclick="closeElectricBillModal()" class="w-full bg-yellow-400 hover:bg-yellow-300 text-black font-black py-3 px-6 rounded-2xl text-base shadow-lg transition active:scale-95">
+                כבה ת'דוד כבר! 🔌
+            </button>
+        </div>
+    </div>
+
+    <!-- כפתור קבלן -->
+    <button onclick="toggleContractorSidebar(true)" class="floating-contractor-btn bg-amber-600 hover:bg-amber-700 text-white font-bold py-3.5 px-2 rounded-l-2xl shadow-xl flex items-center gap-1 transition-all border-y border-l border-amber-300">
+        <span class="text-lg">🏗️</span>
+        <span class="text-xs font-bold tracking-wide">קבלן שיפוצים</span>
+    </button>
+
+    <!-- סיידבאר קבלן -->
+    <div id="contractor-backdrop" onclick="toggleContractorSidebar(false)" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 hidden transition-opacity"></div>
+    <div id="contractor-sidebar" class="closed fixed top-0 right-0 h-full w-84 max-w-[88vw] bg-white dark:bg-gray-900 z-50 shadow-2xl p-5 flex flex-col justify-between border-l border-gray-200 dark:border-gray-800 overflow-y-auto">
+        <div>
+            <div class="flex justify-between items-center mb-4 border-b pb-3 border-gray-200 dark:border-gray-700">
+                <h3 class="font-bold text-xl text-gray-900 dark:text-white flex items-center gap-2"><span>🏗️</span> קבלן שיפוצים</h3>
+                <button onclick="toggleContractorSidebar(false)" class="text-gray-500 hover:text-black dark:hover:text-white text-2xl font-bold p-1">✕</button>
+            </div>
+            <div class="flex flex-col gap-2.5" id="backgrounds-container"></div>
+        </div>
+        <button onclick="toggleContractorSidebar(false)" class="mt-4 w-full bg-gray-200 dark:bg-gray-800 text-gray-800 dark:text-gray-200 py-2.5 rounded-xl font-bold hover:bg-gray-300 transition">סגור חלון</button>
+    </div>
+
+    <div class="max-w-md w-full flex flex-col gap-5 items-center z-10 relative">
+        
+        <!-- כותרת ומדד -->
+        <div class="text-center w-full">
+            <div class="flex justify-between items-center mb-2">
+                <button id="music-toggle" onclick="toggleMusic()" class="text-xs bg-white/70 dark:bg-gray-800 px-2.5 py-1.5 rounded-lg shadow font-semibold">🎵 כבוי</button>
+                <h1 class="text-2xl font-extrabold tracking-tight drop-shadow">התימני המצחיק</h1>
+                <button id="tts-toggle" onclick="toggleTTS()" class="text-xs bg-white/70 dark:bg-gray-800 px-2.5 py-1.5 rounded-lg shadow font-semibold">🗣️ פועל</button>
+            </div>
+            <div class="glass-panel p-4 text-center">
+                <div class="text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">מדד תימניות (נקודות)</div>
+                <div id="score-display" class="text-4xl sm:text-5xl font-black text-green-600 dark:text-green-400 my-1 drop-shadow">0</div>
+                <div class="flex justify-center items-center gap-2 mt-1 flex-wrap">
+                    <span class="text-xs font-bold bg-amber-100 dark:bg-amber-900/60 text-amber-800 dark:text-amber-200 px-2.5 py-1 rounded-full">
+                        כוח לחיצה: <span id="power-display">1</span> ⚡
+                    </span>
+                    <span id="active-bg-perk" class="text-xs font-bold bg-blue-100 dark:bg-blue-900/60 text-blue-800 dark:text-blue-200 px-2.5 py-1 rounded-full">
+                        ⛺ שוק תימני (רגיל)
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <!-- מד רסק עגבניות לוהט -->
+        <div class="glass-panel p-3.5 w-full text-center">
+            <div class="flex justify-between items-center mb-1.5 text-xs font-bold">
+                <span class="flex items-center gap-1">🍅 מגררת רסק עגבניות:</span>
+                <span id="tomato-status-text" class="text-red-500 font-extrabold">0 / 50</span>
+            </div>
+            <div class="w-full bg-gray-200 dark:bg-gray-700 h-3.5 rounded-full overflow-hidden p-0.5 shadow-inner">
+                <div id="tomato-progress-bar" class="bg-gradient-to-r from-orange-500 to-red-600 h-full rounded-full transition-all duration-200" style="width: 0%;"></div>
+            </div>
+            <div id="tomato-cooldown-notice" class="hidden text-[11px] font-bold text-amber-600 dark:text-amber-400 mt-1">
+                ⏳ מתקררת: <span id="tomato-cooldown-timer">02:00</span>
+            </div>
+            <button id="btn-tomato-boost" onclick="activateTomatoFever()" class="mt-2.5 w-full bg-red-600 hover:bg-red-700 disabled:opacity-40 disabled:cursor-not-allowed text-white font-extrabold text-sm py-2 px-4 rounded-xl shadow transition transform active:scale-95" disabled>
+                🌶️ הפעל מצב רסק לוהט!
+            </button>
+        </div>
+
+        <!-- דמות מרכזית -->
+        <div class="relative w-full flex flex-col items-center">
+            <div class="glass-panel p-3.5 rounded-2xl shadow-md mb-3 text-center relative max-w-[92%] border-b-2 border-amber-300 dark:border-amber-600">
+                <p id="phrase-bubble" class="text-base font-bold">איייי יא איבני, תלחץ עליי נראה אותך!</p>
+                <div class="absolute -bottom-2.5 left-1/2 transform -translate-x-1/2 w-5 h-5 bg-inherit border-b border-r border-amber-300 dark:border-amber-600 rotate-45"></div>
+            </div>
+
+            <div id="character-3d-wrapper" style="perspective: 1000px;">
+                <button id="main-character" onclick="clickCharacter(event)" class="text-[110px] leading-none focus:outline-none select-none drop-shadow-2xl transition-transform hover:scale-105 active:scale-95">
+                    👳🏾‍♂️
+                </button>
+            </div>
+            
+            <div class="glass-panel mt-3 px-3 py-1.5 flex gap-2 text-2xl rounded-full overflow-x-auto max-w-full">
+                <button onclick="setCharacter('👳🏾‍♂️', 'סבא יחיא', 'male')" class="hover:scale-125 transition">👳🏾‍♂️</button>
+                <button onclick="setCharacter('👵🏾', 'סבתא שושנה', 'female')" class="hover:scale-125 transition">👵🏾</button>
+                <button onclick="setCharacter('🧑🏽‍🦱', 'נער צעיר', 'male')" class="hover:scale-125 transition">🧑🏽‍🦱</button>
+                <button onclick="setCharacter('👨🏾‍🎤', 'זמר חפלות', 'male')" class="hover:scale-125 transition">👨🏾‍🎤</button>
+                <button onclick="setCharacter('👴🏾', 'מורי חכם', 'male')" class="hover:scale-125 transition">👴🏾</button>
+                <button onclick="setCharacter('🤵🏾‍♂️', 'חתן תימני', 'male')" class="hover:scale-125 transition">🤵🏾‍♂️</button>
+                <button onclick="setCharacter('👰🏾‍♀️', 'כלה בחינה', 'female')" class="hover:scale-125 transition">👰🏾‍♀️</button>
+                <button onclick="setCharacter('👮🏾‍♂️', 'דוד שוטר', 'male')" class="hover:scale-125 transition">👮🏾‍♂️</button>
+            </div>
+        </div>
+
+        <!-- כפתורי פעולה מיוחדים -->
+        <div class="flex gap-2.5 justify-center w-full">
+            <button id="btn-yemenite-step" onclick="doYemeniteStep()" class="glass-panel flex-1 py-2.5 px-2 hover:bg-white/60 transition font-bold flex flex-col items-center text-xs">
+                <span class="text-2xl mb-1">🕺</span>
+                <span id="step-btn-text">צעד תימני (פי 2)</span>
+            </button>
+            <button id="btn-boiler" onclick="toggleBoiler()" class="glass-panel flex-1 py-2.5 px-2 hover:bg-white/60 transition font-bold flex flex-col items-center text-xs">
+                <span id="boiler-icon" class="text-2xl mb-1">💡</span>
+                <span>חשמל</span>
+            </button>
+            <button id="btn-jachnun-rain" onclick="makeJachnunRain()" class="glass-panel flex-1 py-2.5 px-2 hover:bg-white/60 transition font-bold flex flex-col items-center text-xs">
+                <span class="text-2xl mb-1">🌯</span>
+                <span id="jachnun-btn-text">גשם ג'חנון (פי 2)</span>
+            </button>
+            <button id="btn-grate-tomato" onclick="grateTomatoAction()" class="glass-panel flex-1 py-2.5 px-2 hover:bg-white/60 transition font-bold flex flex-col items-center text-xs">
+                <span class="text-2xl mb-1">🍅</span>
+                <span id="grate-btn-text">גרד עגבניה</span>
+            </button>
+        </div>
+
+        <!-- מרכז פעילויות ומיני-משחקים -->
+        <div class="grid grid-cols-2 gap-2.5 w-full">
+            <button onclick="openRouletteModal()" class="glass-panel p-3 hover:scale-[1.02] transition flex flex-col items-center text-center border-amber-400/60 relative overflow-hidden group">
+                <div class="flex items-center gap-1.5 mb-1">
+                    <span class="text-2xl animate-spin" style="animation-duration: 8s;">🎰</span>
+                    <span class="font-extrabold text-xs text-amber-600 dark:text-amber-400">רולטה תימנית</span>
+                </div>
+                <span id="roulette-cooldown-badge" class="text-[10px] font-bold bg-green-500 text-white px-2 py-0.5 rounded-full">
+                    מוכנה לסיבוב! 🎯
+                </span>
+            </button>
+            <button onclick="openCatcherGameModal()" class="glass-panel p-3 hover:scale-[1.02] transition flex flex-col items-center text-center border-green-400/60 relative overflow-hidden group">
+                <div class="flex items-center gap-1.5 mb-1">
+                    <span class="text-2xl animate-bounce">🍲</span>
+                    <span class="font-extrabold text-xs text-green-600 dark:text-green-400">סיר המרק המעופף</span>
+                </div>
+                <span class="text-[10px] font-bold bg-blue-500 text-white px-2 py-0.5 rounded-full">
+                    שחק עכשיו! 🪙
+                </span>
+            </button>
+        </div>
+
+        <!-- כפתור משחקון שאלון תימני -->
+        <button onclick="openQuizModal()" class="glass-panel w-full p-3 hover:scale-[1.02] transition flex justify-center items-center gap-2 text-center border-purple-400/60 relative group">
+            <span class="text-2xl">📜</span>
+            <span class="font-extrabold text-sm text-purple-600 dark:text-purple-400">שאלון תימני (פרסי עתק!)</span>
+        </button>
+
+        <!-- משחק איפה השקל המאוזן -->
+        <div class="glass-panel p-4 w-full text-center overflow-hidden">
+            <h3 class="font-bold mb-1 text-base">איפה השקל? 🪙</h3>
+            <p class="text-xs mb-3 text-gray-600 dark:text-gray-300">
+                רווח פוטנציאלי: <span id="cup-reward-display" class="font-bold text-green-600 dark:text-green-400 text-sm">2</span> נק'
+            </p>
+            
+            <div class="flex justify-center gap-2 mb-3">
+                <button onclick="setCupDifficulty('easy')" class="bg-green-100 hover:bg-green-200 text-green-800 text-xs px-2.5 py-1 rounded font-bold transition">קל (x0.5)</button>
+                <button onclick="setCupDifficulty('medium')" class="bg-yellow-100 hover:bg-yellow-200 text-yellow-800 text-xs px-2.5 py-1 rounded font-bold transition">בינוני (x1.0)</button>
+                <button onclick="setCupDifficulty('hard')" class="bg-red-500 text-white text-xs px-2.5 py-1 rounded font-extrabold shadow transition">קשה (פי 2! 🔥)</button>
+            </div>
+            
+            <div class="relative h-24 w-72 mx-auto mb-3" id="cups-container">
+                <div class="cup" onclick="playShekelGame(0)" style="left: 10px;">🥤<span class="coin hidden absolute bottom-2 left-1/2 transform -translate-x-1/2">🪙</span></div>
+                <div class="cup" onclick="playShekelGame(1)" style="left: 110px;">🥤<span class="coin hidden absolute bottom-2 left-1/2 transform -translate-x-1/2">🪙</span></div>
+                <div class="cup" onclick="playShekelGame(2)" style="left: 210px;">🥤<span class="coin hidden absolute bottom-2 left-1/2 transform -translate-x-1/2">🪙</span></div>
+            </div>
+            
+            <button onclick="resetShekelGame()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs py-2 px-6 rounded-full shadow transition">ערבב כוסות!</button>
+        </div>
+
+        <!-- מכולת שדרוגים -->
+        <div class="glass-panel p-4 w-full">
+            <h3 class="font-bold mb-2.5 text-center text-lg">מכולת תימנית 🛒 <span id="shop-timer" class="text-xs text-gray-500 dark:text-gray-400 block font-normal">מלאי מתחדש בעוד: 60s</span></h3>
+            <div class="flex flex-col gap-2" id="shop-buttons-list"></div>
+        </div>
+
+        <!-- טבלת מובילים אונליין -->
+        <div class="glass-panel p-4 w-full">
+            <h3 class="font-bold mb-1 text-center text-lg">אליפות עולמית אונליין 🌍🏆</h3>
+            <p id="network-status" class="text-center text-xs text-amber-500 font-bold mb-2">מתחבר לשרת ענן חי... 🟡</p>
+            <div class="flex gap-2 mb-2.5">
+                <input type="text" id="player-name" oninput="window.updateNameAndPublish()" placeholder="הכנס שם שחקן..." class="border p-2 rounded-lg flex-1 text-xs dark:bg-gray-800 dark:text-white dark:border-gray-700 text-center font-bold" maxlength="15">
+            </div>
+            <div class="flex justify-between items-center px-1 mb-2 text-[11px] font-semibold text-gray-500 dark:text-gray-400">
+                <span>משתתפים מחוברים: <span id="live-status-pill" class="text-green-600 font-bold">סנכרון פעיל</span></span>
+                <button onclick="forceSyncOnline()" class="hover:text-blue-500">🔄 סנכרן עכשיו</button>
+            </div>
+            <ul id="leaderboard-list" class="w-full flex flex-col gap-1.5 text-xs max-h-56 overflow-y-auto pr-1">
+                <li class="text-center text-gray-500 py-3">טוען שחקנים מהענן... ☁️</li>
+            </ul>
+        </div>
+        
+        <!-- כפתורי הורדה ושיתוף -->
+        <div class="flex gap-2 w-full mb-2">
+            <button onclick="downloadGameFile()" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 rounded-xl shadow transition text-xs">
+                💾 הורד משחק
+            </button>
+            <button onclick="shareGameLink()" class="flex-1 bg-green-600 hover:bg-green-700 text-white font-bold py-2.5 rounded-xl shadow transition text-xs">
+                🔗 שתף משחק
+            </button>
+        </div>
+
+        <button onclick="promptResetData()" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-4 rounded-xl shadow transition text-sm mb-6">
+            🔄 איפוס משחק (משתמש חדש)
+        </button>
+
+    </div>
+
+    <!-- לוגיקת המשחק הראשית -->
+    <script>
+        /* ================= מוזיקה ואפקטים קוליים ================= */
+        class YemeniteSynth {
+            constructor() {
+                this.ctx = null;
+                this.isPlaying = false;
+                this.tempo = 105;
+                this.timerID = null;
+                this.currentStep = 0;
+                this.melody = [62, -1, 63, -1, 66, -1, 67, -1, 69, -1, 67, 66, 63, 62, 63, 66];
+            }
+            init() { 
+                if (!this.ctx) this.ctx = new (window.AudioContext || window.webkitAudioContext)(); 
+            }
+            playTone(freq, time, dur) {
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.type = 'sawtooth';
+                osc.frequency.value = freq;
+                gain.gain.setValueAtTime(0.08, time);
+                gain.gain.exponentialRampToValueAtTime(0.001, time + dur);
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+                osc.start(time);
+                osc.stop(time + dur);
+            }
+            step() {
+                const note = this.melody[this.currentStep];
+                if (note !== -1) {
+                    const freq = 440 * Math.pow(2, (note - 69) / 12);
+                    this.playTone(freq, this.ctx.currentTime, 0.25);
+                }
+                this.currentStep = (this.currentStep + 1) % this.melody.length;
+                this.timerID = setTimeout(() => this.step(), (60 / this.tempo) * 250);
+            }
+            start() {
+                this.init();
+                if (this.isPlaying) return;
+                if (this.ctx.state === 'suspended') this.ctx.resume();
+                this.isPlaying = true;
+                this.step();
+            }
+            stop() {
+                this.isPlaying = false;
+                clearTimeout(this.timerID);
+            }
+            playPop() {
+                this.init();
+                if (this.ctx.state === 'suspended') this.ctx.resume();
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(600, this.ctx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(100, this.ctx.currentTime + 0.1);
+                gain.gain.setValueAtTime(0.2, this.ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.1);
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+                osc.start(this.ctx.currentTime);
+                osc.stop(this.ctx.currentTime + 0.1);
+            }
+            playChaChing() {
+                this.init();
+                if (this.ctx.state === 'suspended') this.ctx.resume();
+                const playTone = (freq, startTime, duration, vol) => {
+                    const osc = this.ctx.createOscillator();
+                    const gain = this.ctx.createGain();
+                    osc.type = 'square';
+                    osc.frequency.setValueAtTime(freq, startTime);
+                    gain.gain.setValueAtTime(vol, startTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, startTime + duration);
+                    osc.connect(gain);
+                    gain.connect(this.ctx.destination);
+                    osc.start(startTime);
+                    osc.stop(startTime + duration);
+                };
+                const t = this.ctx.currentTime;
+                playTone(2000, t, 0.1, 0.1);
+                playTone(2500, t + 0.08, 0.3, 0.15);
+            }
+        }
+        const yemeniteMusic = new YemeniteSynth();
+        window.yemeniteMusic = yemeniteMusic;
+
+        /* ================= משתני משחק גלובליים ================= */
+        window.score = 0;
+        let clickPower = 1;
+        let isDark = false;
+        let ttsEnabled = true;
+        let stepCooldown = 0;
+        let jachnunCooldown = 0;
+        let rouletteCooldown = 0;
+        let isSpinningRoulette = false;
+        let rouletteRotation = 0;
+
+        const REQUIRED_TOMATO_GRATES = 50;
+        let tomatoGrates = 0;
+        let tomatoCooldown = 0;
+        let isTomatoFever = false;
+        let tomatoFeverTimer = null;
+
+        let currentBg = 'שוק תימני';
+        let ownedBackgrounds = ['שוק תימני'];
+        let currentCharacterName = 'סבא יחיא';
+        let currentCharacterGender = 'male';
+
+        function formatBigNumber(num) {
+            if (num === null || num === undefined) return "0";
+            const n = Number(num);
+            if (isNaN(n)) return "0";
+            if (n >= 1e18) return (n / 1e18).toFixed(2).replace(/\.00$/, '') + 'Qi';
+            if (n >= 1e15) return (n / 1e15).toFixed(2).replace(/\.00$/, '') + 'Qa';
+            if (n >= 1e12) return (n / 1e12).toFixed(2).replace(/\.00$/, '') + 'T';
+            if (n >= 1e9) return (n / 1e9).toFixed(2).replace(/\.00$/, '') + 'B';
+            if (n >= 1e6) return (n / 1e6).toFixed(2).replace(/\.00$/, '') + 'M';
+            if (n >= 1e3) return (n / 1e3).toFixed(1).replace(/\.0$/, '') + 'K';
+            return Math.floor(n).toLocaleString();
+        }
+        window.formatBigNumber = formatBigNumber;
+
+        function formatTimerDisplay(seconds) {
+            const m = Math.floor(seconds / 60);
+            const s = seconds % 60;
+            return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+        }
+
+        /* ================= חנויות והגדרות ================= */
+        let cupDifficulty = 'hard';
+        let cupSpeed = 70;
+        let cupShuffles = 25;
+        let coinPos = 1;
+        let shekelPlaying = false;
+        let isShuffling = false;
+        let cupPositions = [0, 1, 2];
+        const cupLeftValues = ['10px', '110px', '210px'];
+
+        const backgroundShop = {
+            'שוק תימני': { cost: 0, emoji: '⛺', themeClass: 'theme-market', perkDesc: 'אווירה שוקקת', imgUrl: 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=1920&q=80', overlay: 'linear-gradient(rgba(255, 255, 255, 0.32), rgba(254, 215, 170, 0.32))' },
+            'סלון תימני מסורתי': { cost: 15000, emoji: '🛋️', themeClass: 'theme-livingroom', perkDesc: '+10% כוח לחיצה', imgUrl: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1920&q=80', overlay: 'linear-gradient(rgba(45, 15, 15, 0.4), rgba(20, 8, 8, 0.55))' },
+            'חתונת חינה זוהרת': { cost: 350000, emoji: '✨', themeClass: 'theme-henna', perkDesc: '15% הנחה במכולת', imgUrl: 'https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=1920&q=80', overlay: 'linear-gradient(rgba(69, 26, 3, 0.35), rgba(180, 83, 9, 0.35))' },
+            'חוף הים בעדן': { cost: 5000000, emoji: '🌊', themeClass: 'theme-eden', perkDesc: 'רסק עגבניות מתמלא כפול', imgUrl: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1920&q=80', overlay: 'linear-gradient(rgba(255, 255, 255, 0.22), rgba(56, 189, 248, 0.18))' },
+            'ארמון מלוכה בצנעא': { cost: 75000000, emoji: '🕌', themeClass: 'theme-palace', perkDesc: 'פי 1.3 רווח מכוסות', imgUrl: 'https://images.unsplash.com/photo-1548013146-72479768bada?auto=format&fit=crop&w=1920&q=80', overlay: 'linear-gradient(rgba(40, 10, 60, 0.42), rgba(15, 5, 25, 0.6))' }
+        };
+        window.backgroundShop = backgroundShop;
+        
+        const shopItems = {
+            'חילבה אסלית': { baseCost: 75, power: 1, stock: 25, bought: 0 },
+            'קובנה לשבת': { baseCost: 450, power: 4, stock: 20, bought: 0 },
+            'סיר מרק רגל': { baseCost: 3500, power: 25, stock: 15, bought: 0 },
+            'סחוג ביתי חריף אש': { baseCost: 25000, power: 180, stock: 12, bought: 0 },
+            'מפעל ג\'חנון': { baseCost: 180000, power: 1200, stock: 10, bought: 0 },
+            'דוד שמש מזהב טהור': { baseCost: 1500000, power: 8500, stock: 8, bought: 0 },
+            'רשת סופר-סחוג עולמית': { baseCost: 25000000, power: 110000, stock: 6, bought: 0 },
+            'אי בתימן': { baseCost: 500000000, power: 2000000, stock: 4, bought: 0 },
+            'חברת תעופה תימן-אייר': { baseCost: 15000000000, power: 50000000, stock: 3, bought: 0 },
+            'לוויין חוואיג\' בחלל': { baseCost: 500000000000, power: 1500000000, stock: 2, bought: 0 },
+            'פירמידת ג\'חנון בינלאומית': { baseCost: 20000000000000, power: 50000000000, stock: 1, bought: 0 },
+            'הירח של צנעא': { baseCost: 800000000000000, power: 1800000000000, stock: 1, bought: 0 },
+            'גלקסיית החילבה הנצחית': { baseCost: 35000000000000000, power: 80000000000000, stock: 1, bought: 0 }
+        };
+        window.shopItems = shopItems;
+        let shopTimer = 60;
+
+        function getUpgradeCost(name) {
+            const item = shopItems[name];
+            if (!item) return 0;
+            const bought = item.bought || 0;
+            const discount = currentBg === 'חתונת חינה זוהרת' ? 0.85 : 1.0;
+            return Math.floor(item.baseCost * Math.pow(1.22, bought) * discount);
+        }
+
+        function getEffectiveClickPower() {
+            let p = clickPower;
+            if (currentBg === 'סלון תימני מסורתי') p = Math.floor(p * 1.1) || (p + 1);
+            if (isTomatoFever) p *= 3;
+            return p;
+        }
+
+        const phrases = [
+            "איי יא עיוני! מה אתה לוחץ כמו משוגע?!",
+            "תביא קצת סחוג, חסר טעם!",
+            "חסוך בחשמל! כבה ת'דוד!",
+            "כמה כסף, כמה... אשתי תהרוג אותי!",
+            "אני לא קמצן, אני מחושב כלכלית!",
+            "שבת שלום ומבורך! אל תשכח לשים מים על הפלטה.",
+            "מי נגע לי בחילבה?! תתרחק מהסיר!",
+            "תגיד, יש לך פריטה ל-200 שקל?"
+        ];
+
+        /* ================= ליבת המשחק (קליקים וחנות) ================= */
+        function clickCharacter(event) {
+            const earned = getEffectiveClickPower();
+            window.score += earned;
+            updateUI();
+
+            if (window.yemeniteMusic) window.yemeniteMusic.playPop();
+
+            if (event) {
+                const floater = document.createElement('div');
+                floater.className = 'floating-text';
+                floater.innerText = `+${formatBigNumber(earned)} 🪙`;
+                const x = event.clientX || window.innerWidth / 2;
+                const y = event.clientY || window.innerHeight / 2;
+                floater.style.left = `${x - 20}px`;
+                floater.style.top = `${y - 30}px`;
+                document.body.appendChild(floater);
+                setTimeout(() => floater.remove(), 900);
+            }
+
+            const charObj = document.getElementById('main-character');
+            if (charObj) {
+                charObj.classList.remove('anim-bounce', 'anim-shake');
+                void charObj.offsetWidth;
+                charObj.classList.add(Math.random() > 0.5 ? 'anim-bounce' : 'anim-shake');
+            }
+
+            const randomPhrase = phrases[Math.floor(Math.random() * phrases.length)];
+            document.getElementById('phrase-bubble').innerText = randomPhrase;
+            speakText(randomPhrase);
+        }
+        window.clickCharacter = clickCharacter;
+
+        function buyUpgrade(name) {
+            const item = shopItems[name];
+            if (!item || item.stock <= 0) return;
+            const cost = getUpgradeCost(name);
+            if (window.score >= cost) {
+                if (window.yemeniteMusic) window.yemeniteMusic.playChaChing();
+                window.score -= cost;
+                clickPower += item.power;
+                item.stock--;
+                item.bought = (item.bought || 0) + 1;
+                updateUI();
+                renderShopUI();
+                showToast(`קנית ${name}!`);
+                saveGameState();
+            } else {
+                showToast(`חסר לך מדד!`);
+            }
+        }
+        window.buyUpgrade = buyUpgrade;
+
+        /* ================= תפאורה 3D ורקעים ================= */
+        const theme3DDecorations = {
+            'שוק תימני': [
+                { emoji: '🍅', x: '12%', y: '25%', z: 60, size: '3.5rem' },
+                { emoji: '🏺', x: '84%', y: '28%', z: 80, size: '3.2rem' }
+            ],
+            'סלון תימני מסורתי': [
+                { emoji: '🫖', x: '10%', y: '32%', z: 70, size: '3.8rem' },
+                { emoji: '🏮', x: '82%', y: '26%', z: 90, size: '3.5rem' }
+            ]
+        };
+
+        function update3DScene() {
+            const layers = document.getElementById('scene-layers-3d');
+            if (!layers) return;
+            layers.innerHTML = '';
+            const decors = theme3DDecorations[currentBg] || [];
+            decors.forEach((item, index) => {
+                const el = document.createElement('div');
+                el.className = 'floating-3d-item';
+                el.innerText = item.emoji;
+                el.style.left = item.x;
+                el.style.top = item.y;
+                el.style.fontSize = item.size;
+                el.style.transform = `translateZ(${item.z}px)`;
+                el.style.animationDelay = `${index * 0.7}s`;
+                layers.appendChild(el);
+            });
+        }
+
+        window.addEventListener('mousemove', (e) => {
+            const bgLayer = document.getElementById('realistic-bg-layer');
+            const world = document.getElementById('scene-3d-world');
+            const x = (e.clientX / window.innerWidth - 0.5);
+            const y = (e.clientY / window.innerHeight - 0.5);
+            if (bgLayer) bgLayer.style.transform = `scale(1.06) translate(${x * -24}px, ${y * -18}px)`;
+            if (world) world.style.transform = `rotateY(${x * 12}deg) rotateX(${-y * 10}deg)`;
+        });
+
+        function applyCurrentTheme() {
+            const bgLayer = document.getElementById('realistic-bg-layer');
+            const overlayLayer = document.getElementById('realistic-bg-overlay');
+            const bg = backgroundShop[currentBg] || backgroundShop['שוק תימני'];
+            if (isDark) {
+                document.body.classList.add('dark-mode');
+                if (bgLayer) { bgLayer.style.backgroundImage = `url('${bg.imgUrl}')`; bgLayer.style.filter = 'brightness(0.35) saturate(0.7)'; }
+                if (overlayLayer) overlayLayer.style.background = 'rgba(15, 23, 42, 0.78)';
+            } else {
+                document.body.classList.remove('dark-mode');
+                document.body.className = document.body.className.replace(/theme-\w+/g, '');
+                document.body.classList.add(bg.themeClass);
+                if (bgLayer) { bgLayer.style.backgroundImage = `url('${bg.imgUrl}')`; bgLayer.style.filter = 'brightness(0.96) saturate(1.05)'; }
+                if (overlayLayer) overlayLayer.style.background = bg.overlay || 'rgba(255, 255, 255, 0.28)';
+            }
+            const perkEl = document.getElementById('active-bg-perk');
+            if (perkEl) perkEl.innerText = `${bg.emoji} ${currentBg} (${bg.perkDesc})`;
+            update3DScene();
+        }
+
+        function handleBackgroundClick(bgName) {
+            const bg = backgroundShop[bgName];
+            if (!bg) return;
+            if (ownedBackgrounds.includes(bgName)) {
+                currentBg = bgName;
+                applyCurrentTheme();
+                renderBackgroundsList();
+                saveGameState();
+                if (window.syncLeaderboardOnline) window.syncLeaderboardOnline();
+                return;
+            }
+            if (window.score >= bg.cost) {
+                if (window.yemeniteMusic) window.yemeniteMusic.playChaChing();
+                window.score -= bg.cost;
+                ownedBackgrounds.push(bgName);
+                currentBg = bgName;
+                applyCurrentTheme();
+                updateUI();
+                renderBackgroundsList();
+                saveGameState();
+                if (window.syncLeaderboardOnline) window.syncLeaderboardOnline();
+            } else {
+                showToast("חסר לך מדד!");
+            }
+        }
+        window.handleBackgroundClick = handleBackgroundClick;
+
+        function setCharacter(emoji, name, gender) {
+            document.getElementById('main-character').innerText = emoji;
+            currentCharacterName = name;
+            currentCharacterGender = gender;
+            updateCooldownsUI();
+            showToast(`בחרת בדמות: ${name}`);
+        }
+        window.setCharacter = setCharacter;
+
+        function toggleContractorSidebar(open) {
+            const sidebar = document.getElementById('contractor-sidebar');
+            const backdrop = document.getElementById('contractor-backdrop');
+            if (!sidebar || !backdrop) return;
+            if (open) {
+                sidebar.classList.remove('closed');
+                backdrop.classList.remove('hidden');
+                renderBackgroundsList();
+            } else {
+                sidebar.classList.add('closed');
+                backdrop.classList.add('hidden');
+            }
+        }
+        window.toggleContractorSidebar = toggleContractorSidebar;
+
+        function renderBackgroundsList() {
+            const container = document.getElementById('backgrounds-container');
+            if (!container) return;
+            container.innerHTML = '';
+            for (const [name, bg] of Object.entries(backgroundShop)) {
+                const isOwned = ownedBackgrounds.includes(name);
+                const isCurrent = currentBg === name;
+                const card = document.createElement('div');
+                card.className = `p-2.5 rounded-2xl border flex flex-col gap-1 transition ${
+                    isCurrent ? 'border-green-500 bg-green-50 dark:bg-green-950/40 shadow-sm' : 
+                    isOwned ? 'border-blue-400 bg-blue-50/50 dark:bg-blue-950/20' : 
+                    'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800'
+                }`;
+                card.innerHTML = `
+                    <div class="flex items-center gap-3">
+                        <div class="w-16 h-14 rounded-xl overflow-hidden shadow-md flex-shrink-0 border border-black/10 relative">
+                            <img src="${bg.imgUrl}" alt="${name}" class="w-full h-full object-cover">
+                            <span class="absolute bottom-1 right-1 text-xs bg-black/60 text-white rounded px-1">${bg.emoji}</span>
+                        </div>
+                        <div class="flex-1 flex flex-col justify-between">
+                            <div class="flex justify-between items-center">
+                                <span class="font-bold text-sm text-gray-900 dark:text-white">${name}</span>
+                            </div>
+                            <span class="text-xs font-semibold text-amber-600 dark:text-amber-400">${bg.perkDesc}</span>
+                            <div class="flex justify-between items-center mt-1">
+                                <span class="text-[11px] text-gray-500 font-medium">${isOwned ? 'בבעלותך' : bg.cost.toLocaleString() + ' מדד'}</span>
+                                <button onclick="handleBackgroundClick('${name}')" class="text-xs font-bold py-1 px-3 rounded-lg ${
+                                    isCurrent ? 'bg-green-600 text-white' : 
+                                    isOwned ? 'bg-blue-600 text-white hover:bg-blue-700' : 
+                                    'bg-amber-600 text-white hover:bg-amber-700'
+                                }">${isCurrent ? 'פעיל' : isOwned ? 'הפעל' : 'קנה'}</button>
+                            </div>
+                        </div>
+                    </div>`;
+                container.appendChild(card);
+            }
+        }
+
+        function refreshShopStock() {
+            for (const key in shopItems) {
+                const cost = shopItems[key].baseCost;
+                if (cost < 1000) shopItems[key].stock = Math.floor(Math.random() * 10) + 15;
+                else if (cost < 50000) shopItems[key].stock = Math.floor(Math.random() * 6) + 8;
+                else if (cost < 5000000) shopItems[key].stock = Math.floor(Math.random() * 4) + 4;
+                else shopItems[key].stock = Math.floor(Math.random() * 2) + 1;
+            }
+            renderShopUI();
+            saveGameState();
+        }
+
+        function renderShopUI() {
+            const container = document.getElementById('shop-buttons-list');
+            if (!container) return;
+            container.innerHTML = '';
+            for (const [name, item] of Object.entries(shopItems)) {
+                const cost = getUpgradeCost(name);
+                const btn = document.createElement('button');
+                btn.className = `w-full bg-amber-500 hover:bg-amber-600 text-white font-bold py-2 px-3 rounded-lg shadow transition flex justify-between items-center text-xs ${item.stock <= 0 ? 'disabled-item' : ''}`;
+                btn.onclick = () => buyUpgrade(name);
+                btn.innerHTML = `
+                    <div class="flex flex-col text-right">
+                        <span class="font-bold">${name} (+${formatBigNumber(item.power)}) <span class="text-[10px] opacity-75">[נרכשו: ${item.bought || 0}]</span></span>
+                        <span class="text-[10px] opacity-80">מלאי זמין: ${item.stock}</span>
+                    </div>
+                    <span class="bg-black/20 px-2 py-1 rounded font-bold">${formatBigNumber(cost)} מדד</span>
+                `;
+                container.appendChild(btn);
+            }
+        }
+
+        /* ================= עזרי משחק ופעולות מיוחדות ================= */
+        function spawnFallingItem(emoji) {
+            const drop = document.createElement('div');
+            drop.innerText = emoji;
+            drop.className = 'falling-item';
+            drop.style.left = `${Math.random() * 90 + 5}vw`;
+            document.body.appendChild(drop);
+            setTimeout(() => drop.remove(), 2400);
+        }
+
+        function doYemeniteStep() {
+            if (stepCooldown > 0) return;
+            const charObj = document.getElementById('main-character');
+            if (charObj) {
+                charObj.classList.remove('anim-yemenite');
+                void charObj.offsetWidth;
+                charObj.classList.add('anim-yemenite');
+            }
+            let mult = (currentCharacterName === 'זמר חפלות') ? 3 : 2;
+            const reward = Math.max(15, Math.floor(getEffectiveClickPower() * mult));
+            window.score += reward;
+            stepCooldown = 20;
+            updateUI();
+            updateCooldownsUI();
+            showToast(`🕺 צעד תימני מושלם! זכית בפי ${mult}: +${formatBigNumber(reward)} מדד!`);
+        }
+        window.doYemeniteStep = doYemeniteStep;
+
+        function toggleBoiler() {
+            isDark = !isDark;
+            document.body.classList.toggle('dark-mode', isDark);
+            document.getElementById('boiler-icon').innerText = isDark ? "🔌" : "💡";
+            if (!isDark) applyCurrentTheme();
+        }
+        window.toggleBoiler = toggleBoiler;
+
+        function makeJachnunRain() {
+            if (jachnunCooldown > 0) return;
+            for (let i = 0; i < 18; i++) setTimeout(() => spawnFallingItem('🌯'), i * 120);
+            let mult = (currentCharacterName === 'חתן תימני') ? 3 : 2;
+            const reward = Math.max(15, Math.floor(getEffectiveClickPower() * mult));
+            window.score += reward;
+            jachnunCooldown = 20;
+            updateUI();
+            updateCooldownsUI();
+            showToast(`🌯 גשם ג'חנון מבורך! זכית בפי ${mult}: +${formatBigNumber(reward)} מדד!`);
+        }
+        window.makeJachnunRain = makeJachnunRain;
+
+        /* ================= סיר המרק (The Pot Catcher) ================= */
+        let catcherAnimId = null;
+        let catcherRunning = false;
+        let catcherTime = 25;
+        let catcherScore = 0;
+        let catcherPotX = 140;
+        const potWidth = 70;
+        const potHeight = 35;
+        let catcherItems = [];
+
+        function getCatcherEntryFee() {
+            return Math.max(100, Math.floor(getEffectiveClickPower() * 50));
+        }
+
+        function openCatcherGameModal() {
+            const p = getEffectiveClickPower();
+            let jachnunMult = (currentCharacterName === 'חתן תימני') ? 3 : 2;
+            const fee = getCatcherEntryFee();
+            
+            const dynamicDesc = document.getElementById('catcher-dynamic-desc');
+            if (dynamicDesc) {
+                dynamicDesc.innerHTML = `עלות כניסה: <span class="text-red-500 font-bold">-${formatBigNumber(fee)} מדד</span> | תפיסת שקל: <span class="text-green-500 font-bold">+${formatBigNumber(p * 2)}</span> | ג'חנון: <span class="text-amber-500 font-bold">+${formatBigNumber(p * jachnunMult)}</span>`;
+            }
+
+            const modal = document.getElementById('catcher-game-modal');
+            if (modal) modal.classList.remove('hidden');
+            const canvas = document.getElementById('catcher-canvas');
+            if (canvas) {
+                const ctx = canvas.getContext('2d');
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                drawCatcherScene(ctx, canvas);
+                canvas.onmousemove = (e) => {
+                    const rect = canvas.getBoundingClientRect();
+                    catcherPotX = Math.max(0, Math.min(canvas.width - potWidth, (e.clientX - rect.left) * (canvas.width / rect.width) - potWidth / 2));
+                };
+                canvas.ontouchmove = (e) => {
+                    if (e.touches[0]) {
+                        const rect = canvas.getBoundingClientRect();
+                        catcherPotX = Math.max(0, Math.min(canvas.width - potWidth, (e.touches[0].clientX - rect.left) * (canvas.width / rect.width) - potWidth / 2));
+                        e.preventDefault();
+                    }
+                };
+            }
+        }
+        window.openCatcherGameModal = openCatcherGameModal;
+
+        function closeCatcherGameModal() {
+            if (catcherRunning) {
+                clearInterval(window.catcherTimerInterval);
+                cancelAnimationFrame(catcherAnimId);
+                catcherRunning = false;
+            }
+            const modal = document.getElementById('catcher-game-modal');
+            if (modal) modal.classList.add('hidden');
+        }
+        window.closeCatcherGameModal = closeCatcherGameModal;
+
+        function drawCatcherScene(ctx, canvas) {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            catcherItems.forEach(item => {
+                ctx.font = `${item.size}px Rubik`;
+                ctx.textAlign = "center";
+                ctx.fillText(item.emoji, item.x, item.y);
+            });
+            ctx.fillStyle = "#94a3b8";
+            ctx.beginPath();
+            ctx.roundRect(catcherPotX, canvas.height - potHeight - 5, potWidth, potHeight, [4, 4, 18, 18]);
+            ctx.fill();
+            ctx.lineWidth = 2;
+            ctx.strokeStyle = "#475569";
+            ctx.stroke();
+            ctx.fillStyle = "#64748b";
+            ctx.fillRect(catcherPotX - 6, canvas.height - potHeight + 4, 6, 8);
+            ctx.fillRect(catcherPotX + potWidth, canvas.height - potHeight + 4, 6, 8);
+            ctx.font = "20px Rubik";
+            ctx.fillText("🍲", catcherPotX + potWidth / 2, canvas.height - 12);
+        }
+
+        function startCatcherGame() {
+            const fee = getCatcherEntryFee();
+            if (window.score < fee) {
+                showToast(`חסר לך עוד ${formatBigNumber(fee - window.score)} מדד לדמי כניסה לסיר!`);
+                return;
+            }
+            if (catcherRunning) return;
+            window.score -= fee;
+            updateUI();
+            
+            catcherRunning = true;
+            catcherTime = 25;
+            catcherScore = 0;
+            catcherItems = [];
+            const btn = document.getElementById('btn-start-catcher');
+            if (btn) btn.disabled = true;
+            const timeEl = document.getElementById('catcher-time-left');
+            const scoreEl = document.getElementById('catcher-score-display');
+            if (timeEl) timeEl.innerText = `${catcherTime}s`;
+            if (scoreEl) scoreEl.innerText = "0";
+            const canvas = document.getElementById('catcher-canvas');
+            const ctx = canvas.getContext('2d');
+
+            window.catcherTimerInterval = setInterval(() => {
+                catcherTime--;
+                if (timeEl) timeEl.innerText = `${catcherTime}s`;
+                if (catcherTime <= 0) {
+                    clearInterval(window.catcherTimerInterval);
+                    cancelAnimationFrame(catcherAnimId);
+                    catcherRunning = false;
+                    if (btn) btn.disabled = false;
+                    window.score += catcherScore;
+                    updateUI();
+                    showToast(`סיימת! תפסת בסיר המרק +${formatBigNumber(catcherScore)} מדד!`);
+                }
+            }, 1000);
+
+            let lastSpawn = Date.now();
+            function gameLoop() {
+                if (!catcherRunning) return;
+                const now = Date.now();
+                if (now - lastSpawn > 420) {
+                    lastSpawn = now;
+                    const rand = Math.random();
+                    let type = 'coin', emoji = '🪙';
+                    if (rand < 0.45) { type = 'coin'; emoji = '🪙'; }
+                    else if (rand < 0.70) { type = 'jachnun'; emoji = '🌯'; }
+                    else if (rand < 0.85) { type = 'tomato'; emoji = '🍅'; }
+                    else { type = 'hazard'; emoji = '⚡'; }
+                    catcherItems.push({ x: Math.random() * (canvas.width - 40) + 20, y: -10, speed: Math.random() * 2.5 + 3, type: type, emoji: emoji, size: 24 });
+                }
+                const potY = canvas.height - potHeight - 5;
+                for (let i = catcherItems.length - 1; i >= 0; i--) {
+                    const it = catcherItems[i];
+                    it.y += it.speed;
+                    if (it.y >= potY && it.y <= potY + potHeight && it.x >= catcherPotX - 10 && it.x <= catcherPotX + potWidth + 10) {
+                        const clickVal = getEffectiveClickPower();
+                        if (it.type === 'coin') catcherScore += clickVal * 2;
+                        else if (it.type === 'jachnun') catcherScore += clickVal * (currentCharacterName === 'חתן תימני' ? 3 : 2);
+                        else if (it.type === 'tomato') { if (tomatoGrates < REQUIRED_TOMATO_GRATES) tomatoGrates = Math.min(REQUIRED_TOMATO_GRATES, tomatoGrates + 5); updateTomatoUI(); }
+                        else if (it.type === 'hazard') catcherScore = Math.max(0, catcherScore - Math.floor(clickVal * 3));
+                        catcherItems.splice(i, 1);
+                        if (scoreEl) scoreEl.innerText = formatBigNumber(catcherScore);
+                        continue;
+                    }
+                    if (it.y > canvas.height + 20) catcherItems.splice(i, 1);
+                }
+                drawCatcherScene(ctx, canvas);
+                catcherAnimId = requestAnimationFrame(gameLoop);
+            }
+            catcherAnimId = requestAnimationFrame(gameLoop);
+        }
+        window.startCatcherGame = startCatcherGame;
+
+        /* ================= שאלון תימני אמריקאי (Trivia Game) ================= */
+        const QUIZ_COST = 1e15; // 1Qa
+        const QUIZ_REWARD = 5e14; // 0.5Qa
+        const quizQuestionsPool = [
+            { q: "מה הפירוש של המילה 'עיוני'?", opts: ["עיניים שלי / יקירי", "אח שלי", "מורה רוחני", "מאכל חריף"], ans: 0 },
+            { q: "ממה עשוי ג'חנון במקור?", opts: ["בצק פילו", "בצק שמרים", "בצק מיוחד מרובה חמאה/מרגרינה", "קמח תירס"], ans: 2 },
+            { q: "מה זה 'מורי'?", opts: ["זמר חתונות", "מורה רוחני / רב", "תבלין חריף", "סוג של ריקוד"], ans: 1 },
+            { q: "איזה תבלין אחראי לצבע הצהוב של המרק התימני?", opts: ["פפריקה", "זעתר", "כמון", "חוואיג'"], ans: 3 },
+            { q: "מה נהוג לאכול עם מלאווח?", opts: ["רק דבש", "רסק עגבניות וביצה", "חומוס וטחינה", "ריבה וחמאה"], ans: 1 },
+            { q: "איך קוראים ללחם התימני האוורירי דמוי הפיתה/פנקייק?", opts: ["לחוח", "בייגלה", "לאפה", "קובנה"], ans: 0 },
+            { q: "איזו ברכה שרים בחתונה תימנית מסורתית?", opts: ["אשת חיל", "שבחי ירושלים", "אהבת הדסה", "הבה נגילה"], ans: 2 }
+        ];
+        let activeQuizQ = null;
+
+        function openQuizModal() {
+            const modal = document.getElementById('quiz-game-modal');
+            if (modal) modal.classList.remove('hidden');
+            document.getElementById('quiz-pre-start').classList.remove('hidden');
+            document.getElementById('quiz-active-area').classList.add('hidden');
+            const btn = document.getElementById('quiz-btn-start');
+            if (btn) {
+                btn.innerText = `התחל שאלון (${formatBigNumber(QUIZ_COST)})`;
+                btn.disabled = window.score < QUIZ_COST;
+            }
+        }
+        window.openQuizModal = openQuizModal;
+
+        function closeQuizModal() {
+            const modal = document.getElementById('quiz-game-modal');
+            if (modal) modal.classList.add('hidden');
+        }
+        window.closeQuizModal = closeQuizModal;
+
+        function startQuiz() {
+            if (window.score < QUIZ_COST) { showToast("חסר לך מדד לשאלון!"); return; }
+            window.score -= QUIZ_COST;
+            updateUI();
+            if (window.yemeniteMusic) window.yemeniteMusic.playChaChing();
+            document.getElementById('quiz-pre-start').classList.add('hidden');
+            document.getElementById('quiz-active-area').classList.remove('hidden');
+            generateQuizQuestion();
+        }
+        window.startQuiz = startQuiz;
+
+        function generateQuizQuestion() {
+            activeQuizQ = quizQuestionsPool[Math.floor(Math.random() * quizQuestionsPool.length)];
+            document.getElementById('quiz-question-text').innerText = activeQuizQ.q;
+            const container = document.getElementById('quiz-options-container');
+            container.innerHTML = '';
+            activeQuizQ.opts.forEach((optText, idx) => {
+                const btn = document.createElement('button');
+                btn.className = "bg-purple-100 dark:bg-purple-900/40 text-purple-900 dark:text-purple-100 hover:bg-purple-200 font-bold py-2 px-3 rounded-lg border border-purple-300 transition text-sm shadow-sm";
+                btn.innerText = optText;
+                btn.onclick = () => answerQuiz(idx);
+                container.appendChild(btn);
+            });
+        }
+
+        function answerQuiz(selectedIdx) {
+            if (selectedIdx === activeQuizQ.ans) {
+                window.score += QUIZ_REWARD;
+                updateUI();
+                if (window.yemeniteMusic) window.yemeniteMusic.playChaChing();
+                showToast(`✅ תשובה נכונה! זכית ב-${formatBigNumber(QUIZ_REWARD)} מדד!`);
+            } else {
+                if (window.yemeniteMusic) window.yemeniteMusic.playPop(); 
+                showToast(`❌ טעות! התשובה הנכונה היא: ${activeQuizQ.opts[activeQuizQ.ans]}`);
+            }
+            closeQuizModal();
+        }
+        window.answerQuiz = answerQuiz;
+
+        /* ================= עזרים כלליים: כוסות, רולטה, עגבניות, עדכוני UI ================= */
+        function getCupRewardValue() {
+            const currentPerClick = getEffectiveClickPower();
+            let reward = (cupDifficulty === 'easy') ? Math.max(2, Math.floor(currentPerClick * 0.5)) : 
+                         (cupDifficulty === 'medium') ? Math.max(5, Math.floor(currentPerClick * 1.0)) : 
+                         Math.max(10, Math.floor(currentPerClick * 2.0));
+            if (currentBg === 'ארמון מלוכה בצנעא') reward = Math.floor(reward * 1.3);
+            return reward;
+        }
+
+        function setCupDifficulty(level) {
+            cupDifficulty = level;
+            cupSpeed = (level === 'easy') ? 250 : (level === 'medium') ? 140 : 70;
+            cupShuffles = (level === 'easy') ? 8 : (level === 'medium') ? 16 : 26;
+            updateUI();
+            showToast(`רמת כוסות: ${level === 'hard' ? 'קשה (פי 2 לחיצה!)' : level === 'medium' ? 'בינוני' : 'קל'}`);
+        }
+        window.setCupDifficulty = setCupDifficulty;
+
+        function resetShekelGame() {
+            if (shekelPlaying || isShuffling) return;
+            shekelPlaying = true;
+            isShuffling = true;
+            const cups = document.querySelectorAll('.cup');
+            const coins = document.querySelectorAll('.coin');
+            cups.forEach(c => c.classList.remove('lifted'));
+            coins.forEach(c => c.classList.add('hidden'));
+            coinPos = Math.floor(Math.random() * 3);
+            setTimeout(() => {
+                cups.forEach(c => c.classList.add('lifted'));
+                coins[coinPos].classList.remove('hidden');
+                setTimeout(() => {
+                    cups.forEach(c => c.classList.remove('lifted'));
+                    coins[coinPos].classList.add('hidden');
+                    setTimeout(() => {
+                        let shuffles = 0;
+                        cups.forEach(c => c.style.transition = `left ${cupSpeed / 1000}s ease-in-out, transform 0.25s ease`);
+                        const shuffleInterval = setInterval(() => {
+                            cupPositions.sort(() => Math.random() - 0.5);
+                            cups[0].style.left = cupLeftValues[cupPositions[0]];
+                            cups[1].style.left = cupLeftValues[cupPositions[1]];
+                            cups[2].style.left = cupLeftValues[cupPositions[2]];
+                            shuffles++;
+                            if (shuffles > cupShuffles) {
+                                clearInterval(shuffleInterval);
+                                isShuffling = false;
+                                showToast("בחר כוס אחת בזהירות!");
+                                cups.forEach(c => c.style.transition = 'left 0.3s ease-in-out, transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275)');
+                            }
+                        }, cupSpeed);
+                    }, 450);
+                }, 1300);
+            }, 150);
+        }
+        window.resetShekelGame = resetShekelGame;
+
+        function playShekelGame(index) {
+            if (!shekelPlaying || isShuffling) return;
+            shekelPlaying = false;
+            const cups = document.querySelectorAll('.cup');
+            const coins = document.querySelectorAll('.coin');
+            cups[index].classList.add('lifted');
+            const reward = getCupRewardValue();
+            if (index === coinPos) {
+                coins[index].classList.remove('hidden');
+                window.score += reward;
+                updateUI();
+                showToast(`זכית ב-${formatBigNumber(reward)} מדד!`);
+            } else {
+                showToast("פראייר! השקל נשאר אצלי!");
+                setTimeout(() => { cups[coinPos].classList.add('lifted'); coins[coinPos].classList.remove('hidden'); }, 600);
+            }
+            setTimeout(() => {
+                cups.forEach(c => c.classList.remove('lifted'));
+                coins.forEach(c => c.classList.add('hidden'));
+            }, 2800);
+        }
+        window.playShekelGame = playShekelGame;
+
+        const rouletteSlices = [
+            { text: "💸 קמצן (-15%)", type: "penalty_percent", val: 0.15, color: "#ef4444" },
+            { text: "🪙 שקל (+פי 5)", type: "reward_click", val: 5, color: "#10b981" },
+            { text: "⚡ נורה (-10%)", type: "penalty_percent", val: 0.10, color: "#f97316" },
+            { text: "🌯 ג'חנון (+פי 15)", type: "reward_click", val: 15, color: "#eab308" },
+            { text: "🚫 בזול (0)", type: "neutral", val: 0, color: "#6b7280" },
+            { text: "🍅 רסק מלא!", type: "tomato_full", val: 0, color: "#dc2626" },
+            { text: "🕺 חפלה (+פי 35)", type: "huge_reward", val: 35, color: "#8b5cf6" },
+            { text: "😱 קנס (-20%)", type: "penalty_percent", val: 0.20, color: "#b91c1c" }
+        ];
+
+        function drawRouletteWheel() {
+            const canvas = document.getElementById('roulette-canvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            const total = rouletteSlices.length;
+            const arc = (2 * Math.PI) / total;
+            const cx = canvas.width / 2;
+            const cy = canvas.height / 2;
+            const radius = cx - 4;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            for (let i = 0; i < total; i++) {
+                const angle = i * arc;
+                ctx.beginPath();
+                ctx.fillStyle = rouletteSlices[i].color;
+                ctx.moveTo(cx, cy);
+                ctx.arc(cx, cy, radius, angle, angle + arc);
+                ctx.lineTo(cx, cy);
+                ctx.fill();
+                ctx.stroke();
+                ctx.save();
+                ctx.translate(cx, cy);
+                ctx.rotate(angle + arc / 2);
+                ctx.textAlign = "right";
+                ctx.fillStyle = "#ffffff";
+                ctx.font = "bold 11px Rubik";
+                ctx.fillText(rouletteSlices[i].text, radius - 12, 4);
+                ctx.restore();
+            }
+            ctx.beginPath();
+            ctx.arc(cx, cy, 22, 0, 2 * Math.PI);
+            ctx.fillStyle = "#1e293b";
+            ctx.fill();
+            ctx.lineWidth = 3;
+            ctx.strokeStyle = "#fbbf24";
+            ctx.stroke();
+            ctx.fillStyle = "#fbbf24";
+            ctx.font = "bold 14px Rubik";
+            ctx.textAlign = "center";
+            ctx.fillText("תימן", cx, cy + 5);
+        }
+
+        function openRouletteModal() {
+            const modal = document.getElementById('roulette-modal');
+            if (modal) modal.classList.remove('hidden');
+            drawRouletteWheel();
+            updateRouletteUI();
+        }
+        window.openRouletteModal = openRouletteModal;
+
+        function closeRouletteModal() {
+            if (isSpinningRoulette) return;
+            const modal = document.getElementById('roulette-modal');
+            if (modal) modal.classList.add('hidden');
+        }
+        window.closeRouletteModal = closeRouletteModal;
+
+        function updateRouletteUI() {
+            const badge = document.getElementById('roulette-cooldown-badge');
+            const btn = document.getElementById('btn-spin-roulette');
+            if (rouletteCooldown > 0) {
+                if (badge) { badge.innerText = `המתנה: ${formatTimerDisplay(rouletteCooldown)}`; badge.className = "text-[10px] font-bold bg-amber-500 text-white px-2 py-0.5 rounded-full"; }
+                if (btn) { btn.disabled = true; btn.innerText = `⏳ הרולטה נחה (${formatTimerDisplay(rouletteCooldown)})`; }
+            } else {
+                if (badge) { badge.innerText = "מוכנה לסיבוב! 🎯"; badge.className = "text-[10px] font-bold bg-green-500 text-white px-2 py-0.5 rounded-full"; }
+                if (btn) { btn.disabled = isSpinningRoulette; btn.innerText = "🎲 סובב עכשיו!"; }
+            }
+        }
+
+        function spinYemeniteRoulette() {
+            if (rouletteCooldown > 0 || isSpinningRoulette) return;
+            isSpinningRoulette = true;
+            updateRouletteUI();
+            const canvas = document.getElementById('roulette-canvas');
+            const resultText = document.getElementById('roulette-result-text');
+            resultText.innerText = "מסתובב... על מה זה ייפול?! 😱";
+            const winningIndex = Math.floor(Math.random() * rouletteSlices.length);
+            const sliceAngle = 360 / rouletteSlices.length;
+            const targetDegree = 360 * 5 + (360 - (winningIndex * sliceAngle + sliceAngle / 2) - 90);
+            rouletteRotation += targetDegree;
+            canvas.style.transition = "transform 4s cubic-bezier(0.15, 0.9, 0.25, 1)";
+            canvas.style.transform = `rotate(${rouletteRotation}deg)`;
+            setTimeout(() => {
+                isSpinningRoulette = false;
+                const result = rouletteSlices[winningIndex];
+                if (result.type === "penalty_percent") {
+                    const lost = Math.floor(window.score * result.val);
+                    window.score = Math.max(0, window.score - lost);
+                    resultText.innerText = `😱 קנס של ${formatBigNumber(lost)} מדד!`;
+                } else if (result.type === "reward_click") {
+                    const won = Math.max(25, Math.floor(getEffectiveClickPower() * result.val));
+                    window.score += won;
+                    resultText.innerText = `🎉 זכית ב-+${formatBigNumber(won)} מדד!`;
+                } else if (result.type === "huge_reward") {
+                    const won = Math.max(100, Math.floor(getEffectiveClickPower() * result.val));
+                    window.score += won;
+                    resultText.innerText = `🥳 חפלה ענקית! +${formatBigNumber(won)} מדד!`;
+                } else if (result.type === "tomato_full") {
+                    tomatoGrates = REQUIRED_TOMATO_GRATES;
+                    tomatoCooldown = 0;
+                    updateTomatoUI();
+                    resultText.innerText = `🍅 מד הרסק מלא לחלוטין!`;
+                } else {
+                    resultText.innerText = `😅 יצאת בזול! 0 הפסד 0 רווח!`;
+                }
+                updateUI();
+                rouletteCooldown = 120;
+                updateRouletteUI();
+                saveGameState();
+            }, 4100);
+        }
+        window.spinYemeniteRoulette = spinYemeniteRoulette;
+
+        function grateTomatoAction() {
+            if (tomatoCooldown > 0 || isTomatoFever || tomatoGrates >= REQUIRED_TOMATO_GRATES) return;
+            tomatoGrates++;
+            updateTomatoUI();
+        }
+        window.grateTomatoAction = grateTomatoAction;
+
+        function updateTomatoUI() {
+            const bar = document.getElementById('tomato-progress-bar');
+            const statusText = document.getElementById('tomato-status-text');
+            const btn = document.getElementById('btn-tomato-boost');
+            const grateBtnText = document.getElementById('grate-btn-text');
+            const notice = document.getElementById('tomato-cooldown-notice');
+            const timerEl = document.getElementById('tomato-cooldown-timer');
+            if (!bar) return;
+            bar.style.width = `${Math.min(100, (tomatoGrates / REQUIRED_TOMATO_GRATES) * 100)}%`;
+            if (tomatoCooldown > 0) {
+                if (notice) notice.classList.remove('hidden');
+                if (timerEl) timerEl.innerText = formatTimerDisplay(tomatoCooldown);
+                statusText.innerText = `מתקרר (${formatTimerDisplay(tomatoCooldown)})`;
+                grateBtnText.innerText = `צינון (${formatTimerDisplay(tomatoCooldown)})`;
+                btn.disabled = true;
+            } else {
+                if (notice) notice.classList.add('hidden');
+                if (isTomatoFever) {
+                    statusText.innerText = "🔥 רסק לוהט פעיל!";
+                    grateBtnText.innerText = "🔥 לוהט!";
+                    btn.disabled = true;
+                } else {
+                    statusText.innerText = `${tomatoGrates} / ${REQUIRED_TOMATO_GRATES}`;
+                    grateBtnText.innerText = `גרד עגבניה (${tomatoGrates}/${REQUIRED_TOMATO_GRATES})`;
+                    btn.disabled = tomatoGrates < REQUIRED_TOMATO_GRATES;
+                }
+            }
+        }
+
+        function activateTomatoFever() {
+            if (tomatoGrates < REQUIRED_TOMATO_GRATES || isTomatoFever || tomatoCooldown > 0) return;
+            isTomatoFever = true;
+            tomatoGrates = 0;
+            updateTomatoUI();
+            document.body.classList.add('tomato-fever-active');
+            showToast("🔥 מצב רסק לוהט הופעל! פי 3 נקודות ל-15 שניות!");
+            for (let i = 0; i < 20; i++) setTimeout(() => spawnFallingItem('🍅'), i * 140);
+            let timeLeft = 15;
+            const btn = document.getElementById('btn-tomato-boost');
+            btn.innerText = `🔥 לוהט! נשארו ${timeLeft} שניות`;
+            tomatoFeverTimer = setInterval(() => {
+                timeLeft--;
+                if (timeLeft <= 0) {
+                    clearInterval(tomatoFeverTimer);
+                    isTomatoFever = false;
+                    document.body.classList.remove('tomato-fever-active');
+                    btn.innerText = "🌶️ הפעל מצב רסק לוהט!";
+                    tomatoCooldown = 120;
+                    updateTomatoUI();
+                } else {
+                    btn.innerText = `🔥 לוהט! נשארו ${timeLeft} שניות`;
+                }
+            }, 1000);
+        }
+        window.activateTomatoFever = activateTomatoFever;
+
+        function updateCooldownsUI() {
+            const stepBtn = document.getElementById('btn-yemenite-step');
+            const stepText = document.getElementById('step-btn-text');
+            const jachnunBtn = document.getElementById('btn-jachnun-rain');
+            const jachnunText = document.getElementById('jachnun-btn-text');
+
+            if (stepCooldown > 0) {
+                if (stepText) stepText.innerText = `צעד תימני (${stepCooldown}s)`;
+                if (stepBtn) stepBtn.classList.add('opacity-60', 'cursor-not-allowed');
+            } else {
+                let m = (currentCharacterName === 'זמר חפלות') ? 3 : 2;
+                if (stepText) stepText.innerText = `צעד תימני (פי ${m})`;
+                if (stepBtn) stepBtn.classList.remove('opacity-60', 'cursor-not-allowed');
+            }
+
+            if (jachnunCooldown > 0) {
+                if (jachnunText) jachnunText.innerText = `גשם ג'חנון (${jachnunCooldown}s)`;
+                if (jachnunBtn) jachnunBtn.classList.add('opacity-60', 'cursor-not-allowed');
+            } else {
+                let m = (currentCharacterName === 'חתן תימני') ? 3 : 2;
+                if (jachnunText) jachnunText.innerText = `גשם ג'חנון (פי ${m})`;
+                if (jachnunBtn) jachnunBtn.classList.remove('opacity-60', 'cursor-not-allowed');
+            }
+            updateTomatoUI();
+        }
+
+        function showToast(msg) {
+            const container = document.getElementById('toast-container');
+            if (!container) return;
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.innerText = msg;
+            container.appendChild(toast);
+            setTimeout(() => { toast.remove(); }, 2800);
+        }
+        window.showToast = showToast;
+
+        function speakText(text) {
+            if (!window.speechSynthesis || !ttsEnabled) return;
+            try {
+                window.speechSynthesis.cancel();
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'he-IL';
+                utterance.rate = 1.15;
+                if (currentCharacterGender === 'female') utterance.pitch = 1.8;
+                else utterance.pitch = 0.8;
+                window.speechSynthesis.speak(utterance);
+            } catch(e) {}
+        }
+
+        function triggerElectricityBill() {
+            if (window.score < 50) return;
+            const lost = Math.floor(window.score * 0.5);
+            window.score -= lost;
+            updateUI();
+            const lostEl = document.getElementById('electric-lost-display');
+            if (lostEl) lostEl.innerText = `-${formatBigNumber(lost)} מדד!`;
+            const modal = document.getElementById('electric-bill-modal');
+            if (modal) modal.classList.remove('hidden');
+            saveGameState();
+            if (window.syncLeaderboardOnline) window.syncLeaderboardOnline();
+        }
+
+        function closeElectricBillModal() {
+            const modal = document.getElementById('electric-bill-modal');
+            if (modal) modal.classList.add('hidden');
+        }
+        window.closeElectricBillModal = closeElectricBillModal;
+
+        function updateUI() {
+            const scoreEl = document.getElementById('score-display');
+            const powerEl = document.getElementById('power-display');
+            const cupRewardEl = document.getElementById('cup-reward-display');
+            if (scoreEl) scoreEl.innerText = formatBigNumber(window.score);
+            if (powerEl) powerEl.innerText = formatBigNumber(getEffectiveClickPower());
+            if (cupRewardEl) cupRewardEl.innerText = formatBigNumber(getCupRewardValue());
+            window.score = window.score || 0;
+            saveGameState();
+        }
+
+        function toggleMusic() {
+            if (yemeniteMusic.isPlaying) {
+                yemeniteMusic.stop();
+                document.getElementById('music-toggle').innerText = "🎵 כבוי";
+            } else {
+                yemeniteMusic.start();
+                document.getElementById('music-toggle').innerText = "🎵 פועל";
+            }
+        }
+        window.toggleMusic = toggleMusic;
+
+        function toggleTTS() {
+            ttsEnabled = !ttsEnabled;
+            document.getElementById('tts-toggle').innerText = ttsEnabled ? "🗣️ פועל" : "🗣️ מושתק";
+            if (!ttsEnabled && window.speechSynthesis) window.speechSynthesis.cancel();
+        }
+        window.toggleTTS = toggleTTS;
+
+        function saveGameState() {
+            const state = {
+                score: window.score, clickPower: clickPower, currentBg: currentBg, ownedBackgrounds: ownedBackgrounds,
+                shopItems: shopItems, tomatoGrates: tomatoGrates, tomatoCooldown: tomatoCooldown, rouletteCooldown: rouletteCooldown,
+                playerName: document.getElementById('player-name') ? document.getElementById('player-name').value : ''
+            };
+            localStorage.setItem('yemeniteClickerFullSave_v4', JSON.stringify(state));
+        }
+
+        function loadGameState() {
+            const raw = localStorage.getItem('yemeniteClickerFullSave_v4') || localStorage.getItem('yemeniteClickerFullSave_v3');
+            if (raw) {
+                try {
+                    const s = JSON.parse(raw);
+                    window.score = s.score || 0;
+                    clickPower = s.clickPower || 1;
+                    if (s.currentBg && backgroundShop[s.currentBg]) currentBg = s.currentBg;
+                    if (s.ownedBackgrounds) ownedBackgrounds = s.ownedBackgrounds;
+                    if (s.tomatoGrates !== undefined) tomatoGrates = s.tomatoGrates;
+                    if (s.tomatoCooldown !== undefined) tomatoCooldown = s.tomatoCooldown;
+                    if (s.rouletteCooldown !== undefined) rouletteCooldown = s.rouletteCooldown;
+                    if (s.shopItems) {
+                        for (let k in s.shopItems) {
+                            if (shopItems[k]) { shopItems[k].stock = s.shopItems[k].stock; shopItems[k].bought = s.shopItems[k].bought || 0; }
+                        }
+                    }
+                    if (s.playerName && document.getElementById('player-name')) document.getElementById('player-name').value = s.playerName;
+                } catch(e) {}
+            }
+            applyCurrentTheme();
+            renderBackgroundsList();
+            renderShopUI();
+            updateUI();
+            updateTomatoUI();
+            updateCooldownsUI();
+            updateRouletteUI();
+        }
+
+        function promptResetData() {
+            const modal = document.getElementById('reset-game-modal');
+            if (modal) modal.classList.remove('hidden');
+        }
+        window.promptResetData = promptResetData;
+
+        function closeResetModal() {
+            const modal = document.getElementById('reset-game-modal');
+            if (modal) modal.classList.add('hidden');
+        }
+        window.closeResetModal = closeResetModal;
+
+        function confirmResetAllData() {
+            localStorage.clear();
+            window.score = 0; clickPower = 1; currentBg = 'שוק תימני'; ownedBackgrounds = ['שוק תימני'];
+            tomatoGrates = 0; tomatoCooldown = 0; rouletteCooldown = 0; stepCooldown = 0; jachnunCooldown = 0;
+            for (let k in shopItems) shopItems[k].bought = 0;
+            if (document.getElementById('player-name')) document.getElementById('player-name').value = '';
+            closeResetModal();
+            setTimeout(() => { location.reload(); }, 600);
+        }
+        window.confirmResetAllData = confirmResetAllData;
+
+        /* פונקציות להורדה ושיתוף המשחק */
+        function downloadGameFile() {
+            const htmlContent = document.documentElement.outerHTML;
+            const blob = new Blob([htmlContent], { type: 'text/html' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'Yemenite_Game.html';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            showToast("💾 הקובץ ירד! שלח אותו לחברים בווטסאפ!");
+        }
+        window.downloadGameFile = downloadGameFile;
+
+        function shareGameLink() {
+            try {
+                const url = window.location.href;
+                const tempInput = document.createElement("input");
+                tempInput.value = url;
+                document.body.appendChild(tempInput);
+                tempInput.select();
+                document.execCommand("copy");
+                document.body.removeChild(tempInput);
+                showToast("🔗 הקישור הועתק! הדבק לחברים בווטסאפ");
+            } catch (err) {
+                showToast("❌ שגיאה בשיתוף, נסה להעתיק מהדפדפן.");
+            }
+        }
+        window.shareGameLink = shareGameLink;
+
+        setInterval(() => {
+            shopTimer--;
+            const timerEl = document.getElementById('shop-timer');
+            if (timerEl) timerEl.innerText = `מלאי מתחדש בעוד: ${shopTimer}s`;
+            if (shopTimer <= 0) { shopTimer = 60; refreshShopStock(); }
+            
+            let needUpdate = false;
+            if (stepCooldown > 0) { stepCooldown--; needUpdate = true; }
+            if (jachnunCooldown > 0) { jachnunCooldown--; needUpdate = true; }
+            if (tomatoCooldown > 0) { tomatoCooldown--; needUpdate = true; }
+            if (rouletteCooldown > 0) { rouletteCooldown--; updateRouletteUI(); }
+            if (needUpdate) updateCooldownsUI();
+        }, 1000);
+
+        window.onload = () => {
+            loadGameState();
+            const delay = (Math.floor(Math.random() * 180) + 180) * 1000;
+            setTimeout(function electricLoop() { triggerElectricityBill(); setTimeout(electricLoop, (Math.floor(Math.random() * 180) + 180) * 1000); }, delay);
+        };
+    </script>
+
+    <!-- מנוע אונליין -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, onSnapshot, collection } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        let playerId = localStorage.getItem('yemeniteGlobalPlayerId_v3');
+        if (!playerId) { playerId = 'ym_' + Math.random().toString(36).substring(2, 10); localStorage.setItem('yemeniteGlobalPlayerId_v3', playerId); }
+
+        const fallbackBots = [
+            { name: 'אלוף תימן', score: 1000000000000000, bg: '🕌' },
+            { name: 'סבא שלום', score: 2500000, bg: '🕌' },
+            { name: 'דודה ציונה', score: 850000, bg: '🛋️' },
+            { name: 'זכריה חריף', score: 320000, bg: '✨' },
+            { name: 'אבנר הקמצן', score: 45000, bg: '⛺' }
+        ];
+
+        let hasFirebase = false;
+        let db = null;
+        let auth = null;
+        let currentUser = null;
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'yemenite-clicker-live';
+        const rawConfig = typeof __firebase_config !== 'undefined' ? __firebase_config : null;
+
+        async function initOnlineBackend() {
+            const statusEl = document.getElementById('network-status');
+            if (rawConfig) {
+                try {
+                    const fbConfig = JSON.parse(rawConfig);
+                    const app = initializeApp(fbConfig);
+                    auth = getAuth(app);
+                    db = getFirestore(app);
+                    if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) await signInWithCustomToken(auth, __initial_auth_token);
+                    else await signInAnonymously(auth);
+                    currentUser = auth.currentUser;
+                    hasFirebase = true;
+                    if (statusEl) { statusEl.innerText = "מחובר לשרת ענן חי בזמן אמת 🟢"; statusEl.className = "text-center text-xs text-green-600 dark:text-green-400 font-bold mb-2"; }
+                    const colRef = collection(db, 'artifacts', appId, 'public', 'data', 'leaderboard');
+                    onSnapshot(colRef, (snapshot) => {
+                        let players = [];
+                        snapshot.forEach(d => players.push(d.data()));
+                        renderOnlineLeaderboard(players);
+                    }, (err) => console.warn("Firestore snapshot error, falling back", err));
+                } catch (e) { console.warn("Firebase init failed", e); }
+            }
+            if (!hasFirebase) {
+                if (statusEl) { statusEl.innerText = "סנכרון ענן בין מכשירים פעיל 🟢"; statusEl.className = "text-center text-xs text-green-600 font-bold mb-2"; }
+                setupPublicCloudSync();
+            }
+            setTimeout(() => window.syncLeaderboardOnline(), 1200);
+        }
+
+        function getPlayerData() {
+            const nameInput = document.getElementById('player-name');
+            const name = (nameInput && nameInput.value.trim()) ? nameInput.value.trim() : 'תימני אנונימי';
+            const bgShop = window.backgroundShop || {};
+            const curBg = window.currentBg || 'שוק תימני';
+            const bgEmoji = (bgShop[curBg] && bgShop[curBg].emoji) ? bgShop[curBg].emoji : '⛺';
+            return { id: playerId, name: name, score: window.score || 0, bg: bgEmoji, updatedAt: Date.now() };
+        }
+
+        window.syncLeaderboardOnline = async function() {
+            const data = getPlayerData();
+            if (hasFirebase && currentUser && db) {
+                try {
+                    const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'leaderboard', currentUser.uid);
+                    await setDoc(docRef, { ...data, uid: currentUser.uid });
+                } catch(e) {}
+            } else { broadcastLocalData(data); }
+        };
+
+        const peerDataMap = new Map();
+        function setupPublicCloudSync() {
+            if (window.BroadcastChannel) {
+                const bc = new BroadcastChannel('yemenite_cross_channel');
+                bc.onmessage = (e) => {
+                    if (e.data && e.data.id) { peerDataMap.set(e.data.id, e.data); renderOnlineLeaderboard(Array.from(peerDataMap.values())); }
+                };
+            }
+            renderOnlineLeaderboard([]);
+        }
+
+        function broadcastLocalData(my) {
+            peerDataMap.set(my.id, my);
+            if (window.BroadcastChannel) {
+                try { const bc = new BroadcastChannel('yemenite_cross_channel'); bc.postMessage(my); } catch(e) {}
+            }
+            renderOnlineLeaderboard(Array.from(peerDataMap.values()));
+        }
+
+        function renderOnlineLeaderboard(players) {
+            const my = getPlayerData();
+            
+            // --- תוספת ליוצר: ספירת שחקנים אמיתיים מהענן ---
+            let realPlayersCount = players.length;
+            if (realPlayersCount === 0 && !hasFirebase) realPlayersCount = peerDataMap.size;
+            
+            const statusPill = document.getElementById('live-status-pill');
+            if (statusPill) {
+                statusPill.innerText = `סה"כ שחקנים רשומים: ${Math.max(1, realPlayersCount)}`;
+                statusPill.className = "text-blue-600 dark:text-blue-400 font-black";
+            }
+            // ------------------------------------------------
+
+            let all = [...players];
+            if (!all.some(p => p.id === my.id || (p.uid && currentUser && p.uid === currentUser.uid))) all.push(my);
+            fallbackBots.forEach(b => { if (!all.some(p => p.name === b.name)) all.push(b); });
+            all.sort((a, b) => b.score - a.score);
+            const top = all.slice(0, 10);
+            const list = document.getElementById('leaderboard-list');
+            if (!list) return;
+            list.innerHTML = '';
+            top.forEach((p, idx) => {
+                const isMe = p.id === my.id || (p.uid && currentUser && p.uid === currentUser.uid);
+                const li = document.createElement('li');
+                li.className = `flex justify-between items-center p-2 rounded-lg ${isMe ? 'bg-green-100 border border-green-500 font-bold' : 'bg-white/70 border border-gray-200'}`;
+                li.innerHTML = `
+                    <div class="flex items-center gap-1.5">
+                        <span class="w-5 h-5 rounded-full bg-amber-400 text-amber-950 flex items-center justify-center font-bold text-[10px]">${idx + 1}</span>
+                        <span>${p.name}</span><span>${p.bg || '⛺'}</span>
+                    </div>
+                    <span class="text-green-600 font-bold">${window.formatBigNumber ? window.formatBigNumber(p.score) : Math.floor(p.score).toLocaleString()}</span>`;
+                list.appendChild(li);
+            });
+        }
+
+        window.forceSyncOnline = () => { window.syncLeaderboardOnline(); };
+        let nameTimer = null;
+        window.updateNameAndPublish = () => { if (nameTimer) clearTimeout(nameTimer); nameTimer = setTimeout(() => window.syncLeaderboardOnline(), 800); };
+        setInterval(() => { if (window.syncLeaderboardOnline) window.syncLeaderboardOnline(); }, 4000);
+        initOnlineBackend();
+    </script>
+</body>
+</html>
